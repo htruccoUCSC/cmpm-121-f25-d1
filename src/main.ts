@@ -10,13 +10,22 @@ document.body.innerHTML = `
 const button = document.getElementById("increment")!;
 const counterElement = document.getElementById("counter")!;
 
-function increaseCounter() {
-  counter += 1;
-  counterElement.textContent = counter.toString();
+function increaseCounter(value: number) {
+  counter += value;
+  counterElement.textContent = counter.toFixed(2);
 }
 
 button.addEventListener("click", () => {
-  increaseCounter();
+  increaseCounter(1);
 });
 
-setInterval(increaseCounter, 1000);
+const growthRate = 1000;
+
+let prev = performance.now();
+requestAnimationFrame(counterCheck);
+
+function counterCheck(timestamp: number) {
+  increaseCounter((timestamp - prev) / growthRate);
+  prev = performance.now();
+  requestAnimationFrame(counterCheck);
+}
