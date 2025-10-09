@@ -10,7 +10,13 @@ document.body.innerHTML = `
 const button = document.getElementById("increment")!;
 const counterElement = document.getElementById("counter")!;
 
-button.addEventListener("click", () => {
+function increaseCounter() {
   counter += 1;
   counterElement.textContent = counter.toString();
+}
+
+button.addEventListener("click", () => {
+  increaseCounter();
 });
+
+setInterval(increaseCounter, 1000);
