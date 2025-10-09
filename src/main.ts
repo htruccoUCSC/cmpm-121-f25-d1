@@ -1,7 +1,16 @@
-import exampleIconUrl from "./noun-paperclip-7598668-00449F.png";
 import "./style.css";
 
+let counter: number = 0;
+
 document.body.innerHTML = `
-  <p>Example image asset: <img src="${exampleIconUrl}" class="icon" /></p>
-  <button type="button">🦬</button>
+  <div>Bisons: <span id="counter">0</span></div>
+  <button id="increment">🦬</button>
 `;
+
+const button = document.getElementById("increment")!;
+const counterElement = document.getElementById("counter")!;
+
+button.addEventListener("click", () => {
+  counter += 1;
+  counterElement.textContent = counter.toString();
+});
