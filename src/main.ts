@@ -2,33 +2,60 @@ import "./style.css";
 
 let counter: number = 0;
 
+interface Item {
+  name: string;
+  cost: number;
+  rate: number;
+}
+
+const availableItems: Item[] = [
+  { name: "Farmer", cost: 10, rate: 0.1 },
+  { name: "Grandma", cost: 100, rate: 2 },
+  { name: "Shaman", cost: 1000, rate: 50 },
+];
+
+const itemsHtml = availableItems.map((item) => {
+  const idName = item.name.toLowerCase();
+  return `
+    <div>
+      <button id="buy${item.name}" disabled>
+        Purchase Bison ${item.name}
+      </button>
+      Cost: <span id="${idName}Cost">${item.cost}</span>
+      Owned: <span id="${idName}Owned">0</span>
+    </div>
+  `;
+}).join("");
+
 document.body.innerHTML = `
   <div>Bisons: <span id="counter">0</span></div>
   <div>Bison Growth Rate: <span id="growthRate">0</span> bisons/sec</div>
   <button id="increment">🦬</button>
-  <div><button id="buyFarmer" disabled>Purchase Bison Farmer</button> Cost: <span id="farmerCost">10</span> Owned: <span id="farmerOwned">0</span></div>
-  <div><button id="buyBisonGrandma" disabled>Purchase Bison Grandma</button> Cost: <span id="grandmaCost">100</span> Owned: <span id="grandmaOwned">0</span></div>
-  <div><button id="buyBisonShaman" disabled>Purchase Bison Shaman</button> Cost: <span id="shamanCost">1000</span> Owned: <span id="shamanOwned">0</span></div>
+  ${itemsHtml}
 `;
 
 const button = document.getElementById("increment")! as HTMLButtonElement;
 const counterElement = document.getElementById("counter")!;
 const growthRateElement = document.getElementById("growthRate")!;
-const buyFarmerButton = document.getElementById(
-  "buyFarmer",
-)! as HTMLButtonElement;
-const buyBisonGrandmaButton = document.getElementById(
-  "buyBisonGrandma",
-)! as HTMLButtonElement;
-const buyBisonShamanButton = document.getElementById(
-  "buyBisonShaman",
-)! as HTMLButtonElement;
-const farmerOwnedElement = document.getElementById("farmerOwned")!;
-const grandmaOwnedElement = document.getElementById("grandmaOwned")!;
-const shamanOwnedElement = document.getElementById("shamanOwned")!;
-const farmerCostElement = document.getElementById("farmerCost")!;
-const grandmaCostElement = document.getElementById("grandmaCost")!;
-const shamanCostElement = document.getElementById("shamanCost")!;
+
+interface itemParts {
+  button: HTMLButtonElement;
+  costElement: HTMLElement;
+  ownedElement: HTMLElement;
+  dynamicCost: number;
+  owned: number;
+}
+
+const itemPartsList: itemParts[] = availableItems.map((item) => {
+  const idName = item.name.toLowerCase();
+  return {
+    button: document.getElementById(`buy${item.name}`) as HTMLButtonElement,
+    costElement: document.getElementById(`${idName}Cost`)!,
+    ownedElement: document.getElementById(`${idName}Owned`)!,
+    dynamicCost: item.cost,
+    owned: 0,
+  };
+});
 
 function increaseCounter(value: number) {
   counter += value;
@@ -37,34 +64,21 @@ function increaseCounter(value: number) {
 
 let growthRate: number = 0;
 
-let farmerOwned: number = 0;
-let grandmaOwned: number = 0;
-let shamanOwned: number = 0;
-let farmerCost: number = 10;
-let grandmaCost: number = 100;
-let shamanCost: number = 1000;
-
 function increaseGrowthRate(value: number) {
   growthRate += value;
   growthRateElement.textContent = growthRate.toFixed(1);
 }
 
-function updateCostAndOwned(
-  type: "farmer" | "grandma" | "shaman",
-  owned: number,
-) {
-  if (type === "farmer") {
-    farmerOwnedElement.textContent = owned.toString();
-    farmerCost = farmerCost * 1.15;
-    farmerCostElement.textContent = farmerCost.toFixed(2);
-  } else if (type === "grandma") {
-    grandmaOwnedElement.textContent = owned.toString();
-    grandmaCost = grandmaCost * 1.15;
-    grandmaCostElement.textContent = grandmaCost.toFixed(2);
-  } else if (type === "shaman") {
-    shamanOwnedElement.textContent = owned.toString();
-    shamanCost = shamanCost * 1.15;
-    shamanCostElement.textContent = shamanCost.toFixed(2);
+function updateCostAndOwned(type: string, owned: number) {
+  const idx = availableItems.findIndex((item) =>
+    item.name.toLowerCase() === type.toLowerCase()
+  );
+  if (idx !== -1) {
+    itemPartsList[idx].owned = owned;
+    itemPartsList[idx].ownedElement.textContent = owned.toString();
+    itemPartsList[idx].dynamicCost = itemPartsList[idx].dynamicCost * 1.15;
+    itemPartsList[idx].costElement.textContent = itemPartsList[idx].dynamicCost
+      .toFixed(2);
   }
 }
 
@@ -72,22 +86,13 @@ button.addEventListener("click", () => {
   increaseCounter(1);
 });
 
-buyFarmerButton.addEventListener("click", () => {
-  increaseGrowthRate(0.1);
-  increaseCounter(-10);
-  updateCostAndOwned("farmer", ++farmerOwned);
-});
-
-buyBisonGrandmaButton.addEventListener("click", () => {
-  increaseGrowthRate(2);
-  increaseCounter(-100);
-  updateCostAndOwned("grandma", ++grandmaOwned);
-});
-
-buyBisonShamanButton.addEventListener("click", () => {
-  increaseGrowthRate(50);
-  increaseCounter(-1000);
-  updateCostAndOwned("shaman", ++shamanOwned);
+itemPartsList.forEach((part, idx) => {
+  part.button.addEventListener("click", () => {
+    const item = availableItems[idx];
+    increaseGrowthRate(item.rate);
+    increaseCounter(-part.dynamicCost);
+    updateCostAndOwned(item.name, ++part.owned);
+  });
 });
 
 let prev = performance.now();
@@ -96,20 +101,9 @@ requestAnimationFrame(counterCheck);
 function counterCheck(timestamp: number) {
   increaseCounter(growthRate ? (timestamp - prev) / (1000 / growthRate) : 0);
   prev = performance.now();
-  if (counter >= farmerCost) {
-    buyFarmerButton.disabled = false;
-  } else {
-    buyFarmerButton.disabled = true;
-  }
-  if (counter >= grandmaCost) {
-    buyBisonGrandmaButton.disabled = false;
-  } else {
-    buyBisonGrandmaButton.disabled = true;
-  }
-  if (counter >= shamanCost) {
-    buyBisonShamanButton.disabled = false;
-  } else {
-    buyBisonShamanButton.disabled = true;
-  }
+  itemPartsList.forEach((part) => {
+    part.button.disabled = counter < part.dynamicCost;
+  });
+
   requestAnimationFrame(counterCheck);
 }
