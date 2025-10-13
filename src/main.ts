@@ -6,12 +6,42 @@ interface Item {
   name: string;
   cost: number;
   rate: number;
+  description: string;
 }
 
 const availableItems: Item[] = [
-  { name: "Farmer", cost: 10, rate: 0.1 },
-  { name: "Grandma", cost: 100, rate: 2 },
-  { name: "Shaman", cost: 1000, rate: 50 },
+  {
+    name: "Farmer",
+    cost: 10,
+    rate: 0.1,
+    description: "A hardworking bison farmer. (0.1 Bisons/sec)",
+  },
+  {
+    name: "Grandma",
+    cost: 100,
+    rate: 2,
+    description: "A wise old bison grandma. (2 Bisons/sec)",
+  },
+  {
+    name: "Shaman",
+    cost: 1000,
+    rate: 50,
+    description: "A mystical bison shaman. (50 Bisons/sec)",
+  },
+  {
+    name: "Whisperer",
+    cost: 5000,
+    rate: 200,
+    description:
+      "A prodigious shaman who can communicate with bison. (200 Bisons/sec)",
+  },
+  {
+    name: "Master",
+    cost: 20000,
+    rate: 1000,
+    description:
+      "A legendary figure who has mastered the art of bison growth. (1000 Bisons/sec)",
+  },
 ];
 
 const itemsHtml = availableItems.map((item) => {
@@ -23,6 +53,7 @@ const itemsHtml = availableItems.map((item) => {
       </button>
       Cost: <span id="${idName}Cost">${item.cost}</span>
       Owned: <span id="${idName}Owned">0</span>
+      <div>${item.description}</div>
     </div>
   `;
 }).join("");
