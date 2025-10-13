@@ -26,6 +26,9 @@ const buyBisonFarmButton = document.getElementById(
 const autoClickerOwnedElement = document.getElementById("autoClickerOwned")!;
 const grandmaOwnedElement = document.getElementById("grandmaOwned")!;
 const farmOwnedElement = document.getElementById("farmOwned")!;
+const autoClickerCostElement = document.getElementById("autoClickerCost")!;
+const grandmaCostElement = document.getElementById("grandmaCost")!;
+const farmCostElement = document.getElementById("farmCost")!;
 
 function increaseCounter(value: number) {
   counter += value;
@@ -37,6 +40,9 @@ let growthRate: number = 0;
 let autoClickerOwned: number = 0;
 let grandmaOwned: number = 0;
 let farmOwned: number = 0;
+let autoClickerCost: number = 10;
+let grandmaCost: number = 100;
+let farmCost: number = 1000;
 
 function increaseGrowthRate(value: number) {
   growthRate += value;
@@ -49,10 +55,16 @@ function updateCostAndOwned(
 ) {
   if (type === "autoClicker") {
     autoClickerOwnedElement.textContent = owned.toString();
+    autoClickerCost = autoClickerCost * 1.15;
+    autoClickerCostElement.textContent = autoClickerCost.toFixed(2);
   } else if (type === "grandma") {
     grandmaOwnedElement.textContent = owned.toString();
+    grandmaCost = grandmaCost * 1.15;
+    grandmaCostElement.textContent = grandmaCost.toFixed(2);
   } else if (type === "farm") {
     farmOwnedElement.textContent = owned.toString();
+    farmCost = farmCost * 1.15;
+    farmCostElement.textContent = farmCost.toFixed(2);
   }
 }
 
@@ -84,17 +96,17 @@ requestAnimationFrame(counterCheck);
 function counterCheck(timestamp: number) {
   increaseCounter(growthRate ? (timestamp - prev) / (1000 / growthRate) : 0);
   prev = performance.now();
-  if (counter >= 10) {
+  if (counter >= autoClickerCost) {
     buyAutoClickerButton.disabled = false;
   } else {
     buyAutoClickerButton.disabled = true;
   }
-  if (counter >= 100) {
+  if (counter >= grandmaCost) {
     buyBisonGrandmaButton.disabled = false;
   } else {
     buyBisonGrandmaButton.disabled = true;
   }
-  if (counter >= 1000) {
+  if (counter >= farmCost) {
     buyBisonFarmButton.disabled = false;
   } else {
     buyBisonFarmButton.disabled = true;
