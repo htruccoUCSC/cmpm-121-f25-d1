@@ -1,7 +1,6 @@
 import "./style.css";
 
-let counter: number = 0;
-
+// Define interfaces for items and their UI state
 interface Item {
   name: string;
   cost: number;
@@ -9,6 +8,15 @@ interface Item {
   description: string;
 }
 
+interface ItemUIState {
+  button: HTMLButtonElement;
+  costElement: HTMLElement;
+  ownedElement: HTMLElement;
+  dynamicCost: number;
+  owned: number;
+}
+
+// Define available items available for purchase by the player
 const availableItems: Item[] = [
   {
     name: "Farmer",
@@ -44,6 +52,7 @@ const availableItems: Item[] = [
   },
 ];
 
+// Generate HTML for items to be inserted into the document body
 const itemsHtml = availableItems.map((item) => {
   const idName = item.name.toLowerCase();
   return `
@@ -58,6 +67,7 @@ const itemsHtml = availableItems.map((item) => {
   `;
 }).join("");
 
+// Set up the HTML structure of the document body
 document.body.innerHTML = `
   <div>Bisons: <span id="counter">0</span></div>
   <div>Bison Growth Rate: <span id="growthRate">0</span> bisons/sec</div>
@@ -65,19 +75,16 @@ document.body.innerHTML = `
   ${itemsHtml}
 `;
 
+// Initialize game state variables and UI elements
+let counter: number = 0;
+let growthRate: number = 0;
+
 const button = document.getElementById("increment")! as HTMLButtonElement;
 const counterElement = document.getElementById("counter")!;
 const growthRateElement = document.getElementById("growthRate")!;
 
-interface itemParts {
-  button: HTMLButtonElement;
-  costElement: HTMLElement;
-  ownedElement: HTMLElement;
-  dynamicCost: number;
-  owned: number;
-}
-
-const itemPartsList: itemParts[] = availableItems.map((item) => {
+// Create UI state for each item
+const itemUIStates: ItemUIState[] = availableItems.map((item) => {
   const idName = item.name.toLowerCase();
   return {
     button: document.getElementById(`buy${item.name}`) as HTMLButtonElement,
@@ -88,52 +95,59 @@ const itemPartsList: itemParts[] = availableItems.map((item) => {
   };
 });
 
+// Functions
+// Functions to update counter by a fixed value
 function increaseCounter(value: number) {
   counter += value;
   counterElement.textContent = counter.toFixed(2);
 }
 
-let growthRate: number = 0;
-
+// Functions to update growth rate by a fixed value
 function increaseGrowthRate(value: number) {
   growthRate += value;
   growthRateElement.textContent = growthRate.toFixed(1);
 }
 
+// Function to update item cost and owned count after purchase
 function updateCostAndOwned(type: string, owned: number) {
-  const idx = availableItems.findIndex((item) =>
+  const index = availableItems.findIndex((item) =>
     item.name.toLowerCase() === type.toLowerCase()
   );
-  if (idx !== -1) {
-    itemPartsList[idx].owned = owned;
-    itemPartsList[idx].ownedElement.textContent = owned.toString();
-    itemPartsList[idx].dynamicCost = itemPartsList[idx].dynamicCost * 1.15;
-    itemPartsList[idx].costElement.textContent = itemPartsList[idx].dynamicCost
+  if (index !== -1) {
+    itemUIStates[index].owned = owned;
+    itemUIStates[index].ownedElement.textContent = owned.toString();
+    itemUIStates[index].dynamicCost = itemUIStates[index].dynamicCost * 1.15;
+    itemUIStates[index].costElement.textContent = itemUIStates[index]
+      .dynamicCost
       .toFixed(2);
   }
 }
 
+// Event Listeners
+// Increment counter on button click
 button.addEventListener("click", () => {
   increaseCounter(1);
 });
 
-itemPartsList.forEach((part, idx) => {
-  part.button.addEventListener("click", () => {
-    const item = availableItems[idx];
+// Purchase items on button click
+itemUIStates.forEach((itemState, index) => {
+  itemState.button.addEventListener("click", () => {
+    const item = availableItems[index];
     increaseGrowthRate(item.rate);
-    increaseCounter(-part.dynamicCost);
-    updateCostAndOwned(item.name, ++part.owned);
+    increaseCounter(-itemState.dynamicCost);
+    updateCostAndOwned(item.name, ++itemState.owned);
   });
 });
 
+// Animation loop to update counter based on growth rate and manage button states
 let prev = performance.now();
 requestAnimationFrame(counterCheck);
 
 function counterCheck(timestamp: number) {
   increaseCounter(growthRate ? (timestamp - prev) / (1000 / growthRate) : 0);
   prev = performance.now();
-  itemPartsList.forEach((part) => {
-    part.button.disabled = counter < part.dynamicCost;
+  itemUIStates.forEach((itemState) => {
+    itemState.button.disabled = counter < itemState.dynamicCost;
   });
 
   requestAnimationFrame(counterCheck);
