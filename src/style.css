@@ -18,6 +18,7 @@ html, body {
 
 body {
   margin: 24px;
+  /* Inspired by ivli18 */
   background: linear-gradient(180deg, var(--bg-tan) 0%, #f7efe0 100%);
   font-family:
     Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
@@ -45,6 +46,7 @@ div > #growthRate {
   color: var(--muted);
 }
 
+/* Inspired by ivli18 */
 #increment {
   --size: 140px;
   width: var(--size);
