@@ -3,3 +3,145 @@
   vertical-align: top;
   border: 1px solid salmon;
 }
+
+:root {
+  --bg-tan: #f4e7d1;
+  --card: #ffffff;
+  --muted: #6b6b6b;
+  --accent: #c96b5a;
+  --shadow: rgba(34, 34, 34, 0.08);
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 24px;
+  background: linear-gradient(180deg, var(--bg-tan) 0%, #f7efe0 100%);
+  font-family:
+    Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial;
+  color: #27272a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+div > #counter,
+div > #growthRate {
+  font-weight: 700;
+  margin-left: 6px;
+  color: #1f2937;
+}
+
+#counter {
+  font-size: 1.8rem;
+}
+
+#growthRate {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+#increment {
+  --size: 140px;
+  width: var(--size);
+  height: var(--size);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 78px;
+  line-height: 1;
+  border-radius: 20px;
+  border: 0;
+  background: linear-gradient(180deg, #fff 0%, #f6f4f2 100%);
+  box-shadow: 0 6px 18px var(--shadow), 0 2px 6px rgba(0, 0, 0, 0.04) inset;
+  cursor: pointer;
+  transition: transform 140ms cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 140ms;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#increment:active {
+  transform: translateY(2px) scale(0.94) rotate(-1deg);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+#increment:focus {
+  outline: 3px solid rgba(201, 107, 90, 0.12);
+  outline-offset: 3px;
+}
+
+button[id^="buy"] {
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  border: 1px solid rgba(34, 34, 34, 0.08);
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+  transition: transform 120ms, box-shadow 120ms, opacity 120ms;
+  display: block;
+  margin: 8px auto;
+}
+
+button[id^="buy"]:active {
+  transform: translateY(1px);
+}
+
+button[id^="buy"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.12);
+}
+
+button[id^="buy"]::after {
+  content: "";
+}
+
+.item-row {
+  max-width: 600px;
+  width: 100%;
+  margin: 6px 0 12px;
+  text-align: center;
+  display: block;
+}
+
+.item-row .meta {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  align-items: baseline;
+  margin-top: 8px;
+}
+
+.meta-line {
+  font-weight: 600;
+  color: #2b2b2b;
+  white-space: nowrap;
+}
+
+.desc {
+  color: var(--muted);
+  max-width: 520px;
+  font-size: 0.92rem;
+  margin: 6px auto 0;
+  text-align: center;
+}
+
+span[id$="Cost"], span[id$="Owned"] {
+  font-weight: 600;
+  color: #2b2b2b;
+}
+
+@media (max-width: 420px) {
+  #increment {
+    --size: 110px;
+    font-size: 62px;
+  }
+  body {
+    margin: 12px;
+  }
+}

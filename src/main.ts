@@ -56,15 +56,17 @@ const availableItems: Item[] = [
 const itemsHtml = availableItems.map((item) => {
   const idName = item.name.toLowerCase();
   return `
-    <div>
-      <button id="buy${item.name}" disabled>
-        Purchase Bison ${item.name}
-      </button>
-      Cost: <span id="${idName}Cost">${item.cost}</span>
-      Owned: <span id="${idName}Owned">0</span>
-      <div>${item.description}</div>
-    </div>
-  `;
+      <div class="item-row">
+        <button id="buy${item.name}" disabled>
+          Purchase Bison ${item.name}
+        </button>
+        <div class="meta">
+          <div class="meta-line">Cost: <span id="${idName}Cost">${item.cost}</span></div>
+          <div class="meta-line">Owned: <span id="${idName}Owned">0</span></div>
+        </div>
+        <div class="desc">${item.description}</div>
+      </div>
+    `;
 }).join("");
 
 // Set up the HTML structure of the document body
